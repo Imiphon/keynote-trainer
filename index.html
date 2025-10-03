@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dein Grundton</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>Finde deinen Grundton</h1>
+
+    <section class="card">
+      <ol class="steps">
+        <li>Ruhe finden, tief atmen, Kiefer locker.</li>
+        <li>Auf „Aufnahme starten“ klicken, dann deinen angenehmsten Ton locker halten.</li>
+        <li>3–6 s reichen. Mehrere Durchläufe, gern an verschiedenen Tagen.</li>
+      </ol>
+      <div class="controls">
+        <button id="btn-start">Aufnahme starten</button>
+        <button id="btn-stop" disabled>Stopp</button>
+        <span id="status" aria-live="polite"></span>
+      </div>
+      <div class="readout">
+        <div>Momentane Tonhöhe: <strong id="cur-hz">–</strong> Hz (<span id="cur-note">–</span>)</div>
+        <div>Stabilität: <span id="cur-stab">–</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Ergebnis</h2>
+      <div id="result-note" class="big">–</div>
+      <div id="result-detail">Noch keine Daten</div>
+      <button id="btn-save" disabled>Durchlauf speichern</button>
+      <button id="btn-clear">Alle Daten löschen</button>
+    </section>
+
+    <section class="card">
+      <h2>Verlauf</h2>
+      <ul id="session-list"></ul>
+    </section>
+
+    <details>
+      <summary>Datenschutz</summary>
+      <p>Die Audio-Analyse passiert lokal im Browser. Es wird nichts hochgeladen.</p>
+    </details>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
