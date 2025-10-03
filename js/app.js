@@ -32,6 +32,12 @@ renderSessions();
 updateAggregate();
 
 async function start(){
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    els.status.textContent = window.isSecureContext === false
+      ? "Chrome blockt das Mikrofon, weil die Seite nicht über HTTPS/localhost läuft. Bitte über https:// oder http://localhost aufrufen."
+      : "Der Browser stellt keine getUserMedia-API bereit.";
+    return;
+  }
   try{
     els.start.disabled = true; els.stop.disabled = false;
     els.status.textContent = "🎙️ Aufnahme läuft… halte einen angenehmen Ton.";
@@ -46,7 +52,15 @@ async function start(){
     samplesHz.length = 0;
     loop();
   }catch(e){
-    els.status.textContent = "Mikrofon-Zugriff abgelehnt.";
+    let msg = "Mikrofon-Zugriff abgelehnt.";
+    if (window.isSecureContext === false){
+      msg = "Chrome blockt das Mikrofon, weil die Seite nicht über HTTPS/localhost läuft. Bitte über https:// oder http://localhost aufrufen.";
+    } else if (e.name === "NotAllowedError"){ // Benutzer oder Browser blockt den Zugriff
+      msg = "Chrome hat den Zugriff verweigert. Bitte in den Website-Einstellungen das Mikrofon freigeben.";
+    } else if (e.name === "NotFoundError" || e.name === "OverconstrainedError"){ // kein passendes Gerät
+      msg = "Kein Mikrofon gefunden oder es ist exklusiv belegt.";
+    }
+    els.status.textContent = msg;
     els.start.disabled = false;
     console.error(e);
   }
