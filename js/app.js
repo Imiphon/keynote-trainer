@@ -2,7 +2,8 @@ import { detectPitchHz, hzToMidi, midiToNoteName, hzToCentClass } from "./pitch.
 import { madFilter, circularMeanCents } from "./stats.js";
 
 let audioCtx, analyser, source, rafId;
-let buf, timeData;
+let timeData, byteData;
+let useFloatTime = true;
 let collecting = false;
 const samplesHz = []; // Rohwerte der aktuellen Aufnahme
 
@@ -41,13 +42,26 @@ async function start(){
   try{
     els.start.disabled = true; els.stop.disabled = false;
     els.status.textContent = "🎙️ Aufnahme läuft… halte einen angenehmen Ton.";
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:false, noiseSuppression:true }});
     audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+      }
+    });
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 2048;
+    useFloatTime = typeof analyser.getFloatTimeDomainData === "function";
     source = audioCtx.createMediaStreamSource(stream);
     source.connect(analyser);
     timeData = new Float32Array(analyser.fftSize);
+    if (!useFloatTime) {
+      byteData = new Uint8Array(analyser.fftSize);
+    }
     collecting = true;
     samplesHz.length = 0;
     loop();
@@ -76,7 +90,20 @@ function stop(){
 }
 
 function loop(){
-  analyser.getFloatTimeDomainData(timeData);
+  if (useFloatTime) {
+    analyser.getFloatTimeDomainData(timeData);
+  } else {
+    if (!byteData || byteData.length !== analyser.fftSize){
+      byteData = new Uint8Array(analyser.fftSize);
+    }
+    analyser.getByteTimeDomainData(byteData);
+    if (!timeData || timeData.length !== analyser.fftSize){
+      timeData = new Float32Array(analyser.fftSize);
+    }
+    for (let i=0;i<byteData.length;i++){
+      timeData[i] = (byteData[i] - 128) / 128;
+    }
+  }
   const hz = detectPitchHz(timeData, audioCtx.sampleRate);
   if (hz && collecting){
     samplesHz.push(hz);

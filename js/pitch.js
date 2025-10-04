@@ -12,7 +12,7 @@ export function detectPitchHz(timeDomain, sampleRate) {
     rms += v*v;
   }
   rms = Math.sqrt(rms/size);
-  if (rms < 0.01) return null; // zu leise
+  if (rms < 0.0015) return null; // rec sensetivity
 
   // 2) Autokorrelation
   const maxLag = Math.floor(sampleRate/50);   // ~50 Hz
