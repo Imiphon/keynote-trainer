@@ -1,9 +1,10 @@
 :root {
     --bg: #0b1020;
-    --card: #121a33;
-    --text: #e7ecf7;
+    --card: #7185c3;
+    --text: #f5edd9;
     --muted: #9fb0d0;
     --accent: #7fb3ff;
+    --header: #f5edd9;
 }
 
 * {
@@ -23,9 +24,33 @@ body {
     padding: 0 16px
 }
 
-h1,
-h2 {
-    margin: 0 0 12px
+.head-text {
+    position: relative;
+    left: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.head-text h1 {
+
+    margin: 0;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+header img {
+    width: 40px;
+    height: 40px;
+}
+
+.info {
+    color: var(--accent);
 }
 
 .card {
