@@ -50,7 +50,6 @@ async function start(){
       audio: {
         echoCancellation: false,
         noiseSuppression: false,
-        autoGainControl: false,
       }
     });
     analyser = audioCtx.createAnalyser();

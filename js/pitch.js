@@ -1,3 +1,5 @@
+const MIN_SIGNAL_RMS = 3e-4;
+
 export function detectPitchHz(timeDomain, sampleRate) {
   // Autokorrelation
   const size = timeDomain.length;
@@ -12,7 +14,7 @@ export function detectPitchHz(timeDomain, sampleRate) {
     rms += v*v;
   }
   rms = Math.sqrt(rms/size);
-  if (rms < 0.0015) return null; // rec sensetivity
+  if (rms < MIN_SIGNAL_RMS) return null; // rec sensetivity
 
   // 2) Autokorrelation
   const maxLag = Math.floor(sampleRate/50);   // ~50 Hz
